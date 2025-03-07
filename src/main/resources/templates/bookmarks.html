@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+	<title>북마크 목록</title>
+</head>
+<main>
+	<h2 class="mb-3">내 북마크</h2>
+	<div class="table-responsive">
+		<table class="table table-striped table-hover">
+			<thead class="table-dark">
+			<tr>
+				<th>ID</th>
+				<th>제목</th>
+				<th>카테고리</th>
+				<th>주소</th>
+				<th>방문 여부</th>
+				<th>방문 횟수</th>
+				<th>마지막 방문</th>
+				<th>액션</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="bookmark : ${bookmarks}">
+				<td th:text="${bookmark.id}"></td>
+				<td th:text="${bookmark.title}"></td>
+				<td th:text="${bookmark.category}"></td>
+				<td th:text="${bookmark.address}"></td>
+				<td th:text="${bookmark.visit} ? '예' : '아니오'"></td>
+				<td th:text="${bookmark.visitCount}"></td>
+				<td th:text="${bookmark.lastVisitDate}"></td>
+				<td>
+					<form th:action="@{/bookmarks/visit(id=${bookmark.id})}" method="post" class="d-inline">
+						<button type="submit" class="btn btn-outline-primary btn-sm">방문</button>
+					</form>
+					<form th:action="@{/api/restaurants/bookmarks/{id}(id=${bookmark.id})}" method="post" th:method="delete" class="d-inline">
+						<button type="submit" class="btn btn-outline-danger btn-sm">삭제</button>
+					</form>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</main>
+</html>

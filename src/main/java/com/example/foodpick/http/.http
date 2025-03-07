@@ -1,0 +1,36 @@
+### 사용자 등록
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "email": "email"
+}
+
+### 사용자 조회 ID
+GET http://localhost:8080/api/users/2
+
+### 사용자 조회 USERNAME
+GET http://localhost:8080/api/users/username/user1
+
+### 사용자 목록 조회
+GET http://localhost:8080/api/users
+
+### 레스토랑 검색
+http://localhost:8080/api/restaurants/search?query=치킨
+
+### 북마크 저장
+http://localhost:8080/api/restaurants/bookmarks?userId=2
+Content-Type: application/json
+
+{
+  "title": "닭장맥주 마곡나루 본점",
+  "category": "술집>요리주점",
+  "address": "서울특별시 강서구 마곡동 757-4",
+  "roadAddress": "서울특별시 강서구 마곡중앙로 161-8",
+  "homePageLink": "https://blog.naver.com/dackjangbeer_magok",
+  "imageLink": "https://d2uja84sd90jmv.cloudfront.net/posts/sdVNFllyZkooyF14PHpF7A/ms.jpg"
+}
+
+### 북마크 목록 조회
+GET http://localhost:8080/api/restaurants/bookmarks?userId=2
