@@ -1,6 +1,7 @@
 package com.example.foodpick.restaurant.controller;
 
 import com.example.foodpick.bookmark.dto.BookmarkResponseDto;
+import com.example.foodpick.restaurant.dto.PageResponseDto;
 import com.example.foodpick.restaurant.dto.RestaurantRequestDto;
 import com.example.foodpick.restaurant.dto.RestaurantResponseDto;
 import com.example.foodpick.restaurant.service.RestaurantService;
@@ -28,12 +29,12 @@ public class RestaurantController {
 
     // 음식점 목록 조회
     @GetMapping
-    public ResponseEntity<Page<RestaurantResponseDto>> getRestaurants(@RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size,
-                                                                @RequestParam(required = false) String keyword) {
+    public ResponseEntity<PageResponseDto<RestaurantResponseDto>> getRestaurants(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "keyword", required = false) String keyword) {
         Page<RestaurantResponseDto> restaurants = restaurantService.getRestaurants(keyword, page, size);
-
-        return ResponseEntity.ok(restaurants);
+        return ResponseEntity.ok(new PageResponseDto<>(restaurants));
     }
 
     // 북마크 추가

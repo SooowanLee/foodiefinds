@@ -1,6 +1,7 @@
 package com.example.foodpick;
 
 import com.example.foodpick.bookmark.dto.BookmarkResponseDto;
+import com.example.foodpick.restaurant.dto.PageResponseDto;
 import com.example.foodpick.restaurant.dto.RestaurantRequestDto;
 import com.example.foodpick.restaurant.dto.RestaurantResponseDto;
 import com.example.foodpick.restaurant.service.RestaurantService;
@@ -8,7 +9,6 @@ import com.example.foodpick.user.dto.UserResponseDto;
 import com.example.foodpick.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,25 +28,25 @@ public class RestaurantViewController {
     private final UserRepository userRepository;
 
     @GetMapping("/restaurants")
-    public String showRestaurants(@RequestParam(name = "query", required = false) String query,
-                                  @RequestParam(name = "page", defaultValue = "0") int page,
-                                  @RequestParam(name = "size", defaultValue = "10") int size,
-                                  Model model) {
-        // 네이버 검색 결과
+    public String showRestaurants(
+            @RequestParam(name = "query", required = false) String query,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            Model model) {
         if (query != null && !query.isEmpty()) {
             RestaurantResponseDto searchResult = restaurantService.search(query);
             model.addAttribute("searchResult", searchResult);
         }
 
-        // DB 음식점 목록
         String url = "http://localhost:8080/api/restaurants?page=" + page + "&size=" + size + (query != null ? "&keyword=" + query : "");
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<PageImpl<RestaurantResponseDto>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null, new ParameterizedTypeReference<PageImpl<RestaurantResponseDto>>() {
-                });
-        model.addAttribute("restaurants", response.getBody());
+        ResponseEntity<PageResponseDto<RestaurantResponseDto>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null, new ParameterizedTypeReference<PageResponseDto<RestaurantResponseDto>>() {});
+        PageResponseDto<RestaurantResponseDto> pageResponse = response.getBody();
+        List<RestaurantResponseDto> restaurants = pageResponse.getContent();
+        model.addAttribute("restaurants", restaurants);
+        model.addAttribute("page", pageResponse);
 
-        // 현재 사용자 (예시로 하드코딩)
         model.addAttribute("currentUser", new UserResponseDto(userRepository.findById(1L).get()));
         return "restaurants";
     }
